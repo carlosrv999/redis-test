@@ -15,10 +15,12 @@ const client = createClient({
 });
 
 app.get("/:key", async (req, res) => {
+  await client.connect();
   const value = await client.get(req.params.key);
   res.status(200).send({
     result: value,
   });
+  await client.disconnect();
 });
 
 app.listen(port, async () => {
@@ -30,5 +32,6 @@ const connectRedis = async () => {
   await client.connect();
   await client.set("carlos", "alicita");
   await client.set("alicita", "carlos");
+  await client.disconnect();
   client.on("error", (err) => console.log("Redis Client Error", err));
 };
